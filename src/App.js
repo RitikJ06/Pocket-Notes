@@ -1,66 +1,117 @@
 import './App.css';
-import { useState } from 'react';
-import noGroupSelectedImg from './images/noGroupSelected.svg'
+import { useState, useRef } from 'react';
+import GroupsSection from './components/groups/GroupsSection';
+import NotesListing from './components/notesListing/NotesListing';
+
+
+let all_groups = JSON.parse(localStorage.getItem('groups'));
+if(all_groups == undefined){
+  all_groups = [];
+}
+
+// define function to get next group or notes id
+function getNextGroupOrNotesId(prefix) {
+  let count = all_groups.length + 1;
+  return function() {
+      return prefix + count++;
+  }
+}
+let nextGroupIDgenerator = getNextGroupOrNotesId('gp');
 
 function App() {
   let [selectedGroup, setSelectedGroup] = useState(null);
+  let [groups, setGroups] = useState([]);
+  let [showCreateGroupForm, setShowCreateGroupForm] = useState(false);
+  let selectedColor = "";
 
+  let initialColorOptions = {
+    '#B38BFA': false,
+    '#FF79F2': false,
+    '#43E6FC': false,
+    '#F19576': false,
+    '#0047FF': false,
+    '#6691FF': false,
+  };
+  let [colorOptions, setColorOptions] = useState(initialColorOptions);
 
+  let groupNameRef = useRef("");
+
+  const addGroup = () => {
+    // validate input
+    selectedColor = Object.keys(colorOptions).find(key => colorOptions[key] === true);
+    if(groupNameRef.current.value.trim() == ""){
+      return;
+    }
+    if(selectedColor == undefined){
+      return;
+    }
+    // add the group
+    all_groups.push(
+      {
+        id: nextGroupIDgenerator(),
+        name : groupNameRef.current.value,
+        color : selectedColor
+      }
+    )
+    // console.log(selectedColor, typeof(selectedColor));
+    // console.log(all_groups);
+    setColorOptions(initialColorOptions);
+    setShowCreateGroupForm(false);
+
+    localStorage.setItem('groups', JSON.stringify(all_groups));
+  }
+  
   return (
     <>
-      <section className='notesGroup'>
-        <div className='groupListTopSection'>
-          <h2 className='appHeading'>Pocket Notes</h2>
-          <button onClick={ () => setSelectedGroup((selectedGroup) => !selectedGroup)} className='createGroupBtn'>	<i class="fa fa-plus"></i> Create Notes Group</button>
-        </div>
+      <div className='groupSectionWrapper'>
+        <GroupsSection setShowCreateGroupForm={setShowCreateGroupForm}  setGroups={setGroups} all_groups = {all_groups} setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
+      </div>
 
-      </section>
-
-      <section className='noteSection'>
-        {!selectedGroup ?
-          <div className='noGroupSelectedSection'>
-            <div className='messageWrapper'>
-              <img src={noGroupSelectedImg}></img>
-              <h1 className='pocketNotesHeading'>Pocket Notes</h1>
-              <p>Send and receive messages without keeping your phone online.
-                <br/>Use Pocket Notes on up to 4 linked devices and 1 mobile phone</p>
-            </div>
-            <div className='encryptionMsg'>
-              <i class="fa fa-lock"></i> end-to-end encrypted
-            </div>
-          </div>
-          :
-           <div>
-            Group notes 
-           </div>
-        }
-      </section>
-
+      <div className='notesListingWrapper'>
+        <NotesListing selectedGroup={selectedGroup} all_groups={all_groups}/>
+      </div>
+    {
+      showCreateGroupForm &&
       <div className='createNewGroupSection'> 
         <div className='createGroupForm'>
           <h2>Create New Notes Group</h2>
           <div className='createGroupInputWrapper'>
             <span className='createGroupInputs'>
               <label>Group Name</label>
-              <input className='groupNameInput' placeholder='Enter Your Group Name...' type='text'/>
+              <input ref={groupNameRef} className='groupNameInput' placeholder='Enter Your Group Name...' type='text'/>
             </span>
             <span className='createGroupInputs'>
               <label>Choose Colour</label>
               <div className='colorOptionsWrapper'>
-                <span style={{background: "#B38BFA"}} className='colorOption'></span>
-                <span style={{background: "#FF79F2"}} className='colorOption'></span>
-                <span style={{background: "#43E6FC"}} className='colorOption'></span>
-                <span style={{background: "#F19576"}} className='colorOption'></span>
-                <span style={{background: "#F19576"}} className='colorOption'></span>
-                <span style={{background: "#6691FF"}} className='colorOption'></span>
+                {Object.keys(colorOptions).map((colorCode, value) =>
+                    <span onClick={
+                      () => {
+                        selectedColor = colorCode; 
+                        console.log(colorCode, 'sdf', selectedColor);
+                        let newOptions = {};
+                        Object.entries(colorOptions).map(([color, value]) => {
+                          if(color !== selectedColor){
+                            newOptions[color] = false;
+                          }
+                          else{
+                            newOptions[color] = true;
+                          }
+                        })
+                        
+                        setColorOptions(() => newOptions);
+                        }
+                  } key={colorCode} style={!colorOptions[colorCode] ? {background: colorCode}: {border: "solid 3px grey", background: colorCode} } className='colorOption'></span>
+                )
+                }
               </div>
             </span>
           </div>  
           <div className='createGroupBtnWrapper'>
-              <button className='createGroupFormBtn'>Create</button>
+              <button onClick={addGroup} className='createGroupFormBtn'>Create</button>
           </div>
         </div>
       </div>
+    }
 
     </>
   );
