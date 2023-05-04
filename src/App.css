@@ -74,3 +74,9 @@
   margin: 0px 4px;
   box-sizing: border-box;
 }
+
+@media(max-width:650px) {
+  .groupSectionWrapper{
+    width: 100%;
+  }
+}

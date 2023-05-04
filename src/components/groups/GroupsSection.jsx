@@ -5,7 +5,7 @@ function GroupCard(props){
   return (
     <>
       <div style={props.id == props.selectedGroup ? {background: "#F7ECDC"}:{background:"white"} } className='groupCard'
-       onClick={() => {props.setSelectedGroup(props.id)}}>
+       onClick={() => {props.setSelectedGroup(props.id)} }>
         <div style={{background:props.groupIconColor}} className='groupIcon'>
             {props.name.slice(0,2).toUpperCase()}
         </div>

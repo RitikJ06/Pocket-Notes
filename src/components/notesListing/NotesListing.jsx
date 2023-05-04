@@ -3,6 +3,7 @@ import noGroupSelectedImg from '../../images/noGroupSelected.svg';
 import './notesListing.css';
 import sendMessageIcon from './sendMessageIcon.svg';
 import { useState, useRef } from 'react';
+import backArrow from './back-arrrow.svg'
 
 let allCurrentNotes = {};
 
@@ -73,6 +74,11 @@ export default function NotesListing(props) {
           :
           <div className='NotesListingInnerWrapper'>
             <div className='notesIconBar'>
+              {!props.isDesktop && 
+                <div className='backIconWrapper' onClick={() => props.setSelectedGroup((selected) => !selected)}>
+                    <img src={backArrow}/>
+                </div> 
+              }
               <div style={{background:seletedGroupObj.color}} className='navGroupIcon'>
                   {seletedGroupObj.name.slice(0,2).toUpperCase()}
               </div>

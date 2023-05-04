@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import GroupsSection from './components/groups/GroupsSection';
 import NotesListing from './components/notesListing/NotesListing';
 
@@ -19,9 +19,22 @@ function getNextGroupOrNotesId(prefix) {
 let nextGroupIDgenerator = getNextGroupOrNotesId('gp');
 
 function App() {
+  const [isDesktop, setDesktop] = useState(window.innerWidth > 650);
+
+  const updateMedia = () => {
+    setDesktop(window.innerWidth > 650);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", updateMedia);
+    return () => window.removeEventListener("resize", updateMedia);
+  });
+
+
   let [selectedGroup, setSelectedGroup] = useState(null);
   let [groups, setGroups] = useState([]);
   let [showCreateGroupForm, setShowCreateGroupForm] = useState(false);
+
   let selectedColor = "";
 
   let initialColorOptions = {
@@ -63,13 +76,24 @@ function App() {
   
   return (
     <>
-      <div className='groupSectionWrapper'>
-        <GroupsSection setShowCreateGroupForm={setShowCreateGroupForm}  setGroups={setGroups} all_groups = {all_groups} setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
-      </div>
 
-      <div className='notesListingWrapper'>
-        <NotesListing selectedGroup={selectedGroup} all_groups={all_groups}/>
-      </div>
+      
+      {
+        isDesktop ?
+        <>
+          <div className='groupSectionWrapper'>
+            <GroupsSection setShowCreateGroupForm={setShowCreateGroupForm}  setGroups={setGroups} all_groups = {all_groups} setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
+          </div>
+          <div className='notesListingWrapper'>
+            <NotesListing isDesktop={isDesktop} selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} all_groups={all_groups}/>
+          </div>
+        </>
+        : (selectedGroup?
+          <NotesListing isDesktop={isDesktop} selectedGroup={selectedGroup} setSelectedGroup={setSelectedGroup} all_groups={all_groups}/>
+          :
+          <GroupsSection setShowCreateGroupForm={setShowCreateGroupForm}  setGroups={setGroups} all_groups = {all_groups} setSelectedGroup={setSelectedGroup} selectedGroup={selectedGroup} />
+          )
+      }
     {
       showCreateGroupForm &&
       <div className='createNewGroupSection'> 
