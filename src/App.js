@@ -76,8 +76,6 @@ function App() {
   
   return (
     <>
-
-      
       {
         isDesktop ?
         <>
@@ -101,17 +99,16 @@ function App() {
           <h2>Create New Notes Group</h2>
           <div className='createGroupInputWrapper'>
             <span className='createGroupInputs'>
-              <label>Group Name</label>
+              <label className='groupNameLabel'>Group Name</label>
               <input ref={groupNameRef} className='groupNameInput' placeholder='Enter Your Group Name...' type='text'/>
             </span>
             <span className='createGroupInputs'>
-              <label>Choose Colour</label>
+              <label className='chooseColourLabel'>Choose Colour</label>
               <div className='colorOptionsWrapper'>
                 {Object.keys(colorOptions).map((colorCode, value) =>
                     <span onClick={
                       () => {
                         selectedColor = colorCode; 
-                        console.log(colorCode, 'sdf', selectedColor);
                         let newOptions = {};
                         Object.entries(colorOptions).map(([color, value]) => {
                           if(color !== selectedColor){
@@ -131,7 +128,7 @@ function App() {
             </span>
           </div>  
           <div className='createGroupBtnWrapper'>
-              <button onClick={addGroup} className='createGroupFormBtn'>Create</button>
+            <button onClick={addGroup} className='createGroupFormBtn'>Create</button>
           </div>
         </div>
       </div>

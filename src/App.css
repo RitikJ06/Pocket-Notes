@@ -79,4 +79,37 @@
   .groupSectionWrapper{
     width: 100%;
   }
+
+  .createGroupForm{
+    width: 85%;
+    border-radius: 8px;
+    padding: 5%;
+  }
+  .createGroupForm h2{
+    font-size: 20px;
+    margin: 4%;
+  }
+  .createGroupInputs{
+    justify-content: flex-start;
+  }
+  .createGroupInputs label{
+    font-size: 1rem;
+    width: fit-content;
+    margin-right: 2%;
+    font-weight: 700;
+    word-wrap: normal;
+    width: 40%;
+  }
+  .groupNameInput{
+    width: 60%;
+  }
+  .colorOptionsWrapper{
+    width: 60%;
+    flex-wrap: wrap;
+  }
+  .colorOption{
+    width: 25px;
+    height: 25px;
+    margin: 2%;
+  }
 }
